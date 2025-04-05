@@ -6,9 +6,13 @@ const express = require('express'),
     multer = require('multer'),
     upload = multer(),
     app = express(),
+    {createServer} = require('node:http');
+    
 
     PORT = process.env.PORT || 3000,
     NODE_ENV = process.env.NODE_ENV || 'development';
+
+const httpServer = createServer(app);
 
 app.set('port', PORT);
 app.set('env', NODE_ENV);
@@ -32,8 +36,6 @@ app.use(express.static('public'));
 
 app.use(cookieParser());
 
-require('./routes')(app);
-
 // catch 404
 app.use((req, res, next) => {
     // log.error(`Error 404 on ${req.url}.`);
@@ -50,10 +52,23 @@ app.use((err, req, res, next) => {
 
 module.exports = app;
 
-app.listen(PORT, () => {
+var io = require('socket.io')(httpServer, {path: '/client/socket.io'});
+
+require('./routes')(app, io);
+
+io.on('connection', (socket) => {
+    console.log('A user connected')
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+})
+
+httpServer.listen(PORT, () => {
     console.log(
         `Express Server started on Port ${app.get(
             'port'
         )} | Environment : ${app.get('env')}`
     );
 });
+
+exports.io = io;
