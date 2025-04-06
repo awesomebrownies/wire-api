@@ -1,9 +1,9 @@
 const express = require('express');
 const esp = require('../services/esp');
 const router = new express.Router();
- 
+
 router.post('/send', async (req, res, next) => {
-  let options = { 
+  let options = {
   };
 
   options.espPost = req.body;
@@ -13,6 +13,7 @@ router.post('/send', async (req, res, next) => {
     res.status(result.status || 200).send(result.data);
   }
   catch (err) {
+    console.log(err);
     return res.status(500).send({
       error: err || 'Something went wrong.'
     });
