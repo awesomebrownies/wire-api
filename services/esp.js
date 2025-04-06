@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+const { io } = require('../server.js');
 
 const NODE0 = (0, 0);
 const NODE1 = (2.75, 0);
@@ -60,15 +60,13 @@ function lineLineIntersection(A, B, C, D) {
 
   // Calculate the intersection point
   const intersectionPoint = [
-    A[0] + t * AB[0],
-    A[1] + t * AB[1]
+    Number(String(A[0] + t * AB[0]).split(".")[0] + "." + String(A[0] + t * AB[0]).split(".")[1].substring(0,2)),
+    Number(String(A[1] + t * AB[1]).split(".")[0] + "." + String(A[1] + t * AB[1]).split(".")[1].substring(0,2))
   ];
 
   console.log(intersectionPoint + " or maybe null?")
-  return intersectionPoint;
+  return `${intersectionPoint[0]},${intersectionPoint[1]}`;
 }
-
-
 
 
 
@@ -113,7 +111,9 @@ module.exports = {
           devices.devices[mac] = lineLineIntersection([0, 0], polarToCartesian(rssi0, heading0, 0), [2.75, 0], polarToCartesian(rssi1, heading1, 1));
         }
         // NOTE: HERE IS WHERE YOU EMIT SOCKET TO NOTIFY CLIENT
-        // console.log(JSON.stringify(devices));
+        console.log(JSON.stringify(devices));
+        io.emit("position_update", devices)
+
         fs.writeFileSync("store.json", "{}");
       } else {
         dataString = JSON.stringify(dataJSON);
