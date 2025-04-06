@@ -5,27 +5,16 @@ const NODE0 = (0, 0);
 const NODE1 = (2.75, 0);
 
 function polarToCartesian(radius, degrees, node) {
+  console.log("polarToCartesian");
   radius = 1000;
   var pi = Math.PI;
   var xOffset = 0;
   if (node) {
     xOffset = 2.75
   }
+  console.log([(radius * Math.cos(degrees * (pi / 180))) + xOffset, radius * Math.sin(degrees * (pi / 180))]);
   return [(radius * Math.cos(degrees * (pi / 180))) + xOffset, radius * Math.sin(degrees * (pi / 180))]
 }
-
-
-class Point {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-
-  // Method used to display X and Y coordinates
-  // of a point
-
-}
-
 
 //start end, start end
 function lineLineIntersection(A, B, C, D) {
@@ -110,15 +99,21 @@ module.exports = {
 
     try {
       if (JSON.stringify(Object.keys(dataJSON)) == JSON.stringify(["0", "1"])) {
-        for (const mac in Object.keys(dataJSON["0"])) {
+        // console.log("got both");
+        // console.log(Object.keys(dataJSON["0"]));
+        for (let mac in Object.keys(dataJSON["0"])) {
+          mac = Object.keys(dataJSON["0"])[mac];
+          // console.log(JSON.stringify(dataJSON["0"]))
           var rssi0 = dataJSON["0"][mac].rssi;
           var heading0 = dataJSON["0"][mac].heading;
           var rssi1 = dataJSON["1"][mac].rssi;
           var heading1 = dataJSON["1"][mac].heading;
-          console.log("line0: ", polarToCartesian(rssi0, heading0, 0));
-          console.log("line1: ", polarToCartesian(rssi1, heading1, 1));
+          // console.log("line0: ", polarToCartesian(rssi0, heading0, 0));
+          // console.log("line1: ", polarToCartesian(rssi1, heading1, 1));
           devices.devices[mac] = lineLineIntersection([0, 0], polarToCartesian(rssi0, heading0, 0), [2.75, 0], polarToCartesian(rssi1, heading1, 1));
         }
+        // NOTE: HERE IS WHERE YOU EMIT SOCKET TO NOTIFY CLIENT
+        // console.log(JSON.stringify(devices));
         fs.writeFileSync("store.json", "{}");
       } else {
         dataString = JSON.stringify(dataJSON);
@@ -128,6 +123,7 @@ module.exports = {
         }
       }
     } catch (e) {
+      console.log(e);
       dataString = JSON.stringify(dataJSON);
       fs.writeFileSync("store.json", dataString);
       return {
