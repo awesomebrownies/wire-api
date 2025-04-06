@@ -26,34 +26,57 @@ class Point {
 
 }
 
+
+//start end, start end
 function lineLineIntersection(A, B, C, D) {
-  // Line AB represented as a1x + b1y = c1
-  var a1 = B[1] - A[1];
-  var b1 = A[0] - B[0];
-  var c1 = a1 * (A[0]) + b1 * (A[1]);
+  console.log("testing at beginning")
 
-  // Line CD represented as a2x + b2y = c2
-  var a2 = D[1] - C[1];
-  var b2 = C[0] - D[0];
-  var c2 = a2 * (C[0]) + b2 * (C[1]);
-
-  var determinant = a1 * b2 - a2 * b1;
-
-  if (determinant == 0) {
-    // The lines are parallel. This is simplified
-    // by returning a pair of FLT_MAX
-    var returnVal = new Point(Number.MAX_VALUE, Number.MAX_VALUE);
-
-    return `${returnVal.x}, ${returnVal.y}`;
+  // Create vectors for the line segments
+  const AB = [B[0] - A[0], B[1] - A[1]];
+  const CD = [D[0] - C[0], D[1] - C[1]];
+  
+  // Cross product helper function
+  function cross(v1, v2) {
+    return v1[0] * v2[1] - v1[1] * v2[0];
   }
-
-  else {
-    var x = (b2 * c1 - b1 * c2) / determinant;
-    var y = (a1 * c2 - a2 * c1) / determinant;
-    var returnVal = new Point(x, y);
-
-    return `${returnVal.x}, ${returnVal.y}`;
+  
+  // Check if the lines are parallel or coincident
+  if (cross(AB, CD) === 0) {
+    // Calculate vector from A to C
+    const AC = [C[0] - A[0], C[1] - A[1]];
+    
+    // Lines are parallel or coincident
+    if (cross(AC, AB) === 0) {
+      // Lines are coincident
+      return null;
+    } else {
+      // Lines are parallel but not coincident
+      return null;
+    }
   }
+  
+  // Calculate the intersection point
+  const denom = cross(AB, CD);
+  if (denom === 0) {
+    return null;
+  }
+  
+  const AC = [C[0] - A[0], C[1] - A[1]];
+  const t = cross(AC, CD) / denom;
+  const u = cross(AC, AB) / denom;
+  
+  if (t < 0 || t > 1 || u < 0 || u > 1) {
+    return null;
+  }
+  
+  // Calculate the intersection point
+  const intersectionPoint = [
+    A[0] + t * AB[0],
+    A[1] + t * AB[1]
+  ];
+  
+  console.log(intersectionPoint + " or maybe null?")
+  return intersectionPoint;
 }
 
 
@@ -83,6 +106,7 @@ module.exports = {
 
       }
     }
+
 
     try {
       if (Object.keys(dataJSON) == ["0", "1"]) {
