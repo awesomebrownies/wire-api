@@ -34,17 +34,17 @@ function lineLineIntersection(A, B, C, D) {
   // Create vectors for the line segments
   const AB = [B[0] - A[0], B[1] - A[1]];
   const CD = [D[0] - C[0], D[1] - C[1]];
-  
+
   // Cross product helper function
   function cross(v1, v2) {
     return v1[0] * v2[1] - v1[1] * v2[0];
   }
-  
+
   // Check if the lines are parallel or coincident
   if (cross(AB, CD) === 0) {
     // Calculate vector from A to C
     const AC = [C[0] - A[0], C[1] - A[1]];
-    
+
     // Lines are parallel or coincident
     if (cross(AC, AB) === 0) {
       // Lines are coincident
@@ -54,27 +54,27 @@ function lineLineIntersection(A, B, C, D) {
       return null;
     }
   }
-  
+
   // Calculate the intersection point
   const denom = cross(AB, CD);
   if (denom === 0) {
     return null;
   }
-  
+
   const AC = [C[0] - A[0], C[1] - A[1]];
   const t = cross(AC, CD) / denom;
   const u = cross(AC, AB) / denom;
-  
+
   if (t < 0 || t > 1 || u < 0 || u > 1) {
     return null;
   }
-  
+
   // Calculate the intersection point
   const intersectionPoint = [
     A[0] + t * AB[0],
     A[1] + t * AB[1]
   ];
-  
+
   console.log(intersectionPoint + " or maybe null?")
   return intersectionPoint;
 }
@@ -109,12 +109,14 @@ module.exports = {
 
 
     try {
-      if (Object.keys(dataJSON) == ["0", "1"]) {
+      if (JSON.stringify(Object.keys(dataJSON)) == JSON.stringify(["0", "1"])) {
         for (const mac in Object.keys(dataJSON["0"])) {
           var rssi0 = dataJSON["0"][mac].rssi;
           var heading0 = dataJSON["0"][mac].heading;
           var rssi1 = dataJSON["1"][mac].rssi;
           var heading1 = dataJSON["1"][mac].heading;
+          console.log("line0: ", polarToCartesian(rssi0, heading0, 0));
+          console.log("line1: ", polarToCartesian(rssi1, heading1, 1));
           devices.devices[mac] = lineLineIntersection([0, 0], polarToCartesian(rssi0, heading0, 0), [2.75, 0], polarToCartesian(rssi1, heading1, 1));
         }
         fs.writeFileSync("store.json", "{}");
