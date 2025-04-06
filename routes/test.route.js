@@ -3,10 +3,11 @@ const esp = require('../services/test');
 const router = new express.Router();
  
 router.post('/send', async (req, res, next) => {
+  console.log('>> /test/send HIT');
   let options = { 
   };
 
-  options.espPost = req.body;
+  options.testPost = req.body;
 
   try {
     const result = await esp.postSend(options);

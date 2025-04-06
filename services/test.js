@@ -1,37 +1,26 @@
-const {io } = require('../server.js');
+const { io } = require('../server.js');
 
 module.exports = {
   /**
-  * 
-
-  * @param options.espPost.devices
-  * @param options.espPost.id
-
-  */
+   * @param options.testPost.devices
+   * @param options.testPost.id
+   */
   postSend: async (options) => {
-
-    // Implement your business logic here...
-    //
-    // Return all 2xx and 4xx as follows:
-    //
-    // return {
-    //   status: 'statusCode',
-    //   data: 'response'
-    // }
-
-    // If an error happens during your business logic implementation,
-    // you can throw it as follows:
-    //
-    // throw new Error('<Error message>'); // this will result in a 500
-
-    io.emit('position_update', options.data)
-
-    var data = {},
-      status = '200';
-
+    console.log(">> postSend triggered with options:", JSON.stringify(options));
+    let responseData = { success: true };
+    
+    try {
+      // Emit the event to all connected clients
+      io.emit('position_update', options.testPost);
+      console.log("Emitted position_update event with data:", JSON.stringify(options));
+    } catch(e) {
+      console.error("Socket emission error:", e);
+      responseData = { success: false, error: e.message };
+    }
+    
     return {
-      status: status,
-      data: data
-    };  
+      status: 200,
+      data: responseData
+    };
   },
 };

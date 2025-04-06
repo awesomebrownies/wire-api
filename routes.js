@@ -1,4 +1,5 @@
-module.exports = function (app, io) {
+module.exports = function (app) {
+
   /*
   * Routes
   */
